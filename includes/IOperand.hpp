@@ -2,14 +2,7 @@
 # define IOPERAND_HPP
 
 # include <string>
-
-enum eOperandType {
-	Int8,
-	Int16,
-	Int32,
-	Float,
-	Double
-};
+# include "eOperandType.hpp"
 
 class IOperand {
 	public:

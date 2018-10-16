@@ -2,6 +2,10 @@
 # define OPERAND_TPP
 
 # include <cmath>
+# include <sstream>
+# include <iomanip>
+# include <type_traits>
+# include <stdexcept>
 # include "IOperand.hpp"
 # include "OperandFactory.hpp"
 
@@ -10,11 +14,11 @@ class Operand : public IOperand {
 	public:
 		Operand();
 		Operand(eOperandType type, T value);
-		Operand(Operand const &operand);
 		virtual ~Operand();
 		int getPrecision(void) const;
 		eOperandType getType(void) const;
 		eOperandType getPriorityType(eOperandType const & firstType, eOperandType const & secondType) const;
+		IOperand const * resultOperand(IOperand const & rhs, std::string const & value) const;
 		IOperand const * operator+(IOperand const & rhs) const;
 		IOperand const * operator-(IOperand const & rhs) const;
 		IOperand const * operator*(IOperand const & rhs) const;
@@ -24,34 +28,22 @@ class Operand : public IOperand {
 
 		class ArithmeticException : public std::exception {
 			public:
-				virtual ~ArithmeticException(void) throw() {
-					return;
-				}
-
-				ArithmeticException(void) {
-					return;
-				}
-				virtual const char *what() const throw() {
-					return "division or modulo by zero not allowed.";
-				}
+				virtual ~ArithmeticException(void) throw();
+				ArithmeticException(void);
+				virtual const char *what() const throw();
+				ArithmeticException(ArithmeticException const &arithmeticException);
 
 			private:
-				ArithmeticException(ArithmeticException const &arithmeticException) {
-					*this = arithmeticException;
-					return;
-				}
-
-				Operand::ArithmeticException & operator=(ArithmeticException const &arithmeticException) {
-					(void)arithmeticException;
-					return *this;
-				}
+				Operand::ArithmeticException & operator=(ArithmeticException const &arithmeticException);
 		};
 
 	private:
+		Operand(Operand const &operand);
 		Operand & operator=(Operand const &operand);
-		eOperandType _type;
-		T _value;
-		std::string _sValue;
+		static std::string const convertValueToString(T value);
+		eOperandType const _type;
+		T const _value;
+		std::string const _sValue;
 };
 
 #endif
